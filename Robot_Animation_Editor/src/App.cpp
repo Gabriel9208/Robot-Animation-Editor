@@ -1,6 +1,7 @@
 #include "App.h"
 #include <GL/glew.h>
-#include <GL/freeglut.h>
+
+#include "scene/GUI/GUI.h"
 
 void App::glInit()
 {
@@ -47,7 +48,7 @@ void App::init()
     glInit();
 
     mainScene = new EditorScene();
-    guiPanel = new GUI(window);
+    guiPanel = new GUI(window, mainScene);
     //glfwSetKeyCallback(window, keyPress);
 }
 

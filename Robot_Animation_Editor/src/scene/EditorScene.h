@@ -2,7 +2,6 @@
 #include "./models/Robot.h"
 #include "./camara/Camara.h"
 #include "../graphics/shaders/ShaderProgram.h"
-#include "./GUI/GUI.h"
 
 #include <GLFW/glfw3.h>
 
@@ -19,5 +18,7 @@ public:
 	~EditorScene() {}
 
 	void render();
+
+	inline Robot& getRobot() { return robot; }
 };
 

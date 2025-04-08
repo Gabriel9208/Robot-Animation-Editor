@@ -20,7 +20,12 @@
 #define LEFT_CALF 13
 #define LEFT_FOOT 14
 
-void GUI::init(GLFWwindow* window)
+GUI::GUI(GLFWwindow* window, EditorScene* _scene) : partSelected(0)
+{
+    init(window, _scene);
+}
+
+void GUI::init(GLFWwindow* window, EditorScene* _scene)
 {
     const char* glsl_version = "#version 450";
 
@@ -37,7 +42,15 @@ void GUI::init(GLFWwindow* window)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
+    bindScene(_scene);
+}
 
+void GUI::bindScene(EditorScene* _scene)
+{
+    if (_scene != nullptr)
+    {
+        scene = _scene;
+    }
 }
 
 void GUI::render()
@@ -121,7 +134,4 @@ void GUI::_render()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-GUI::GUI(GLFWwindow* window) : partSelected(0)
-{
-    init(window);
-}
+
