@@ -47,6 +47,13 @@ void GUI::render()
     _render();
 }
 
+void GUI::terminate()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
+
 void GUI::startFrame()
 {
     ImGui_ImplOpenGL3_NewFrame();
@@ -112,4 +119,9 @@ void GUI::_render()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+GUI::GUI(GLFWwindow* window) : partSelected(0)
+{
+    init(window);
 }

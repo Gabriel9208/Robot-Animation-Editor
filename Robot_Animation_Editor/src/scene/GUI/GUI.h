@@ -9,11 +9,13 @@ private:
 	void startFrame();
 	void defineInterface();
 	void _render();
+
 public:
-	GUI() : partSelected(0) {}
+	GUI(GLFWwindow* window);
 	~GUI(){}
 
 	void init(GLFWwindow* window);
 	void render();
+	void terminate();
 };
 

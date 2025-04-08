@@ -45,4 +45,28 @@ void App::init()
     }
 
     glInit();
+
+    mainScene = new EditorScene();
+    guiPanel = new GUI(window);
+    //glfwSetKeyCallback(window, keyPress);
+}
+
+void App::loop()
+{
+    while (!glfwWindowShouldClose(window))
+    {
+        mainScene->render();
+
+        guiPanel->render();
+
+        glfwSwapBuffers(window);
+
+        glfwPollEvents();
+    }
+}
+
+void App::terminate()
+{
+    guiPanel->terminate();
+    glfwTerminate();
 }

@@ -6,8 +6,8 @@ class App
 {
 private: 
 	GLFWwindow* window;
-	EditorScene mainScene;
-	GUI guiPanel;
+	EditorScene* mainScene;
+	GUI* guiPanel;
 
 	void glInit();
 public:
