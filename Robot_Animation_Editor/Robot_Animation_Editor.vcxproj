@@ -167,9 +167,6 @@
     <ClCompile Include="src\scene\camara\Camara.cpp" />
     <ClCompile Include="src\scene\EditorScene.cpp" />
     <ClCompile Include="src\scene\GUI\GUI.cpp" />
-    <ClCompile Include="src\scene\models\Arm.cpp" />
-    <ClCompile Include="src\scene\models\Head.cpp" />
-    <ClCompile Include="src\scene\models\Leg.cpp" />
     <ClCompile Include="src\scene\models\Object.cpp" />
     <ClCompile Include="src\scene\models\Robot.cpp" />
     <ClCompile Include="src\scene\scene graph\Node.cpp" />
@@ -487,9 +484,6 @@
     <ClInclude Include="src\scene\camara\Camara.h" />
     <ClInclude Include="src\scene\EditorScene.h" />
     <ClInclude Include="src\scene\GUI\GUI.h" />
-    <ClInclude Include="src\scene\models\Arm.h" />
-    <ClInclude Include="src\scene\models\Head.h" />
-    <ClInclude Include="src\scene\models\Leg.h" />
     <ClInclude Include="src\scene\models\Object.h" />
     <ClInclude Include="src\scene\models\Robot.h" />
     <ClInclude Include="src\scene\scene graph\Node.h" />

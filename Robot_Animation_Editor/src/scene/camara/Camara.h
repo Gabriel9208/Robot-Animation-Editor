@@ -25,5 +25,6 @@ public:
 	void setUpVector(glm::vec3 newUp);
 
 	inline glm::vec3 getPos() const { return pos; }
+	inline glm::vec3 getTarget() const { return target; }
 	inline glm::mat4 lookAt() const { return glm::lookAt(pos, target, up); }
 };
