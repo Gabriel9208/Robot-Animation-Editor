@@ -1,6 +1,9 @@
 #include "GUI.h"
 
 #include "glm/glm.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+
+#include "glm/gtx/string_cast.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -89,12 +92,15 @@ void GUI::mainPanel()
 {
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Parts of the Robot");
-    // Header section
-    ImGui::SeparatorText("Usage");
-    ImGui::Text("Choose a part to modify.");
-    ImGui::SeparatorText("Parts");
 
+    ImGui::Begin("Configure Panel");
+    if (ImGui::Button("Report"))
+    {
+        report();
+    }
+    ImGui::SeparatorText("Usage");
+    ImGui::Text("1. WASDQE to move camara.\n2. Press ALT + WASD to rotate camara.\n 3. Choose a part to modify.\n 4. Press \"Report\" to output transformation info of each parts.");
+    ImGui::SeparatorText("Parts");
     // Part names array
     const char* partNames[] = {
         "Head",
@@ -172,4 +178,12 @@ void GUI::_render()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-
+void GUI::report()
+{
+    for (int i = 0; i < 15; i++)
+    {
+        Node* node = &(robot->getNode(i));
+        std::cout << "Node " << i << " have\nTranslation vector : " << glm::to_string(node->getTranslateOffset()) << std::endl <<
+            "Rotation angle: " << glm::to_string(node->getRotateAngle()) << std::endl << std::endl;
+    }
+}

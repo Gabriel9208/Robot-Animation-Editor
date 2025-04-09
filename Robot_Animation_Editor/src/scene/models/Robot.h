@@ -20,6 +20,8 @@ public:
 
 	void render(Renderer& renderer, const Camara& camara, const ShaderProgram& program);
 
+	void standMotion();
+
 	inline Node& getNode(unsigned int index) { return parts[index]; }
 };
 

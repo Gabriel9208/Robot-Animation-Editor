@@ -35,12 +35,12 @@ void Renderer::drawElement(const ShaderProgram& program, Node& node, const Camar
 		node.updateModelMatrix();
 	}
 
-	float windowAspectRatio = App::getWindowHeight() / App::getWindowWidth();
+	float windowAspectRatio = App::getWindowWidth() == 0 ? 1 : App::getWindowHeight() / App::getWindowWidth();
 
 	glm::mat4 parent = node.getParentModelMatrix();
 	glm::mat4 model = node.getModelMatrix();
 	glm::mat4 view = camara.lookAt();
-	glm::mat4 orth = glm::ortho(-20.0f, 20.0f, -windowAspectRatio * 20 - 10, windowAspectRatio * 20 - 10, -10.0f, 10.0f);
+	glm::mat4 orth = glm::ortho(-20.0f, 20.0f, -windowAspectRatio * 20 - 10, windowAspectRatio * 20 - 10, -100.0f, 100.0f);
 
 	glm::mat4 MVP = orth * view * parent * model;
 

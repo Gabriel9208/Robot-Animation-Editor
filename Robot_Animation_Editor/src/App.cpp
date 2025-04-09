@@ -18,35 +18,60 @@ static void keyPress(GLFWwindow* window, int key, int scancode, int action, int 
     {
         if (key == GLFW_KEY_W) // camara forward
         {
-            camaraPos[2] -= OFFSET;
-            camara->setPos(camaraPos);
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+                camaraPos[2] -= OFFSET;
                 camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1], camaraTarget[2] - OFFSET));
             }
+            else
+            {
+                // TODO: still have gimbal lock issue -> maybe use quaternion
+                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -0.05f, glm::vec3(1.0f, 0.0f, 0.0f));
+                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
+                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+            }
+            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_S) // camara backward
         {
-            camaraPos[2] += OFFSET;
-            camara->setPos(camaraPos);
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+                camaraPos[2] += OFFSET;
                 camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1], camaraTarget[2] + OFFSET));
             }
+            else
+            {
+                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), 0.05f, glm::vec3(1.0f, 0.0f, 0.0f));
+                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
+                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+            }
+            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_D) // camara go right
         {
-            camaraPos[0] += OFFSET;
-            camara->setPos(camaraPos);
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+                camaraPos[0] += OFFSET;
                 camara->setTarget(glm::vec3(camaraTarget[0] + OFFSET, camaraTarget[1], camaraTarget[2]));
             }
+            else
+            {
+                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), 0.05f, glm::vec3(0.0f, 1.0f, 0.0f));
+                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
+                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+            }
+            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_A) // camara go left
         {
-            camaraPos[0] -= OFFSET;
-            camara->setPos(camaraPos);
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
+                camaraPos[0] -= OFFSET;
                 camara->setTarget(glm::vec3(camaraTarget[0] - OFFSET, camaraTarget[1], camaraTarget[2]));
             }
+            else
+            {
+                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -0.05f, glm::vec3(0.0f, 1.0f, 0.0f));
+                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
+                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+            }
+            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_E) // camara go up
         {

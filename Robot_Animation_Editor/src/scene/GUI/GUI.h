@@ -28,5 +28,7 @@ public:
 	void bindScene(EditorScene* _scene);
 	void render();
 	void terminate();
+
+	void report();
 };
 
