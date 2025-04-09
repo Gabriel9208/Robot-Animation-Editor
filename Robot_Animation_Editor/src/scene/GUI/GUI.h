@@ -2,6 +2,7 @@
 #include "../scene/EditorScene.h"
 
 #include <GLFW/glfw3.h>
+#include <cstdlib>
 
 
 class GUI
@@ -21,7 +22,7 @@ private:
 
 public:
 	GUI(GLFWwindow* window, EditorScene* _scene);
-	~GUI(){}
+	~GUI();
 
 	void init(GLFWwindow* window, EditorScene* _scene);
 	void bindScene(EditorScene* _scene);

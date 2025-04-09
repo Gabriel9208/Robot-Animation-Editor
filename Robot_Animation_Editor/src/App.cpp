@@ -3,6 +3,47 @@
 
 #include "scene/GUI/GUI.h"
 
+static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+    Camara* camara = &(app->getCamara());
+    glm::vec3 camaraPos = camara->getPos();
+
+    if (action == GLFW_REPEAT || action == GLFW_PRESS)
+    {
+        if (key == GLFW_KEY_W) // camara forward
+        {
+            camaraPos[2] -= 0.5f;
+            camara->setPos(camaraPos);
+        }
+        if (key == GLFW_KEY_S) // camara backward
+        {
+            camaraPos[2] += 0.5f;
+            camara->setPos(camaraPos);
+        }
+        if (key == GLFW_KEY_D) // camara go right
+        {
+            camaraPos[0] += 0.5f;
+            camara->setPos(camaraPos);
+        }
+        if (key == GLFW_KEY_A) // camara go left
+        {
+            camaraPos[0] -= 0.5f;
+            camara->setPos(camaraPos);
+        }
+        if (key == GLFW_KEY_E) // camara go up
+        {
+            camaraPos[1] += 0.5f;
+            camara->setPos(camaraPos);
+        }
+        if (key == GLFW_KEY_Q) // camara go down
+        {
+            camaraPos[1] += 0.5f;
+            camara->setPos(camaraPos);
+        }
+    }
+}
+
 void App::glInit()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -13,6 +54,13 @@ void App::glInit()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClearDepth(1.0f);
+}
+
+App::~App()
+{
+    free(mainScene); 
+    free(guiPanel); 
+    free(window);
 }
 
 void App::init()
@@ -39,6 +87,7 @@ void App::init()
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSetWindowUserPointer(window, this);
 
     if (glewInit() != GLEW_OK)
     {
@@ -49,7 +98,7 @@ void App::init()
 
     mainScene = new EditorScene();
     guiPanel = new GUI(window, mainScene);
-    //glfwSetKeyCallback(window, keyPress);
+    glfwSetKeyCallback(window, keyPress);
 }
 
 void App::loop()
@@ -71,3 +120,5 @@ void App::terminate()
     guiPanel->terminate();
     glfwTerminate();
 }
+
+

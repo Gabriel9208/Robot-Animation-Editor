@@ -2,6 +2,10 @@
 #include "./scene/EditorScene.h"
 #include "./scene/GUI/GUI.h"
 
+#include <cstdlib>
+#include "scene/camara/Camara.h"
+
+
 class App
 {
 private: 
@@ -11,11 +15,13 @@ private:
 
 	void glInit();
 public:
-	App() {}
-	~App() {}
+	App(): window(nullptr), mainScene(nullptr), guiPanel(nullptr) {}
+	~App();
 
 	void init();
 	void loop();
 	void terminate();
+
+	inline Camara& getCamara() { return mainScene->getCamara(); }
 };
 

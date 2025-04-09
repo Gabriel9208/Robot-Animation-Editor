@@ -20,5 +20,6 @@ public:
 	void render();
 
 	inline Robot& getRobot() { return robot; }
+	inline Camara& getCamara() { return camara; }
 };
 

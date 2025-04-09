@@ -27,6 +27,13 @@ GUI::GUI(GLFWwindow* window, EditorScene* _scene) : partSelected(0)
     init(window, _scene);
 }
 
+GUI::~GUI()
+{
+    free(robot);
+    free(selectedNode);
+    free(scene);
+}
+
 void GUI::init(GLFWwindow* window, EditorScene* _scene)
 {
     const char* glsl_version = "#version 450";
