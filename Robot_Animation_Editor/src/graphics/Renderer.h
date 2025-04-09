@@ -4,6 +4,7 @@
 #include "shaders/ShaderProgram.h"
 #include "../scene/models/Object.h"
 #include "../scene/camara/Camara.h"
+#include "../scene/scene graph/Node.h"
 
 
 class Renderer
@@ -16,6 +17,6 @@ private:
 public:
 	static Renderer& getInstance();
 
-	void drawElement(const ShaderProgram& program, const Object& obj, const Camara& camara) const;
+	void drawElement(const ShaderProgram& program, Node& vode, const Camara& camara) const;
 	void clear();
 };

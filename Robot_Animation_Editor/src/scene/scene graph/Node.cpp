@@ -1,10 +1,29 @@
 #include "Node.h"
 
+Node::Node(const std::string& modelPath,
+	const std::string& mtlPath,
+	const std::string& filePrefix,
+	std::vector<Node*> _childern) :
+
+	object(modelPath, mtlPath, filePrefix),
+	dirty(false),
+	rotateOffset(1.0f, 0.0f, 0.0f, 0.0f),
+	translateOffset(0.0f),
+	modelMatrix(1.0f),
+	parentModelMatrix(1.0f)
+{
+	addChildren(_childern);
+	updateModelMatrix();
+}
+
 Node::Node(Node&& other) noexcept:
+	object(std::move(other.object)),
+	dirty(false),
+	rotateOffset(other.rotateOffset),
+	translateOffset(other.translateOffset),
 	children(std::move(other.children)),
 	modelMatrix(other.modelMatrix),
-	parentModelMatrix(other.parentModelMatrix),
-	object(std::move(other.object))
+	parentModelMatrix(other.parentModelMatrix)
 {}
 
 Node& Node::operator=(Node&& other) noexcept
@@ -17,51 +36,42 @@ Node& Node::operator=(Node&& other) noexcept
 	return *this;
 }
 
+void Node::updateModelMatrix()
+{
+	modelMatrix = glm::translate(glm::mat4(1.0f), translateOffset) * glm::mat4_cast(rotateOffset);
+	updateChildMatrix();
+	dirty = false;
+}
 
 void Node::addChildren(const std::vector<Node*>& _childern)
 {
+	children.insert(children.end(), _childern.begin(), _childern.end());
 }
 
 void Node::updateChildMatrix()
 {
 	for (int i = 0; i < children.size(); i++)
 	{
-		children[i]->parentModelMatrix = modelMatrix * children[i]->parentModelMatrix;
+		children[i]->parentModelMatrix = modelMatrix;
 	}
 }
 
-void Node::translate(float x, float y, float z)
+void Node::setTranslate(glm::vec3 trans)
 {
-	glm::vec4 trans = glm::vec4(x, y, z, 1);
-	glm::vec4 e1 = glm::vec4(1, 0, 0, 0);
-	glm::vec4 e2 = glm::vec4(0, 1, 0, 0);
-	glm::vec4 e3 = glm::vec4(0, 0, 1, 0);
-	glm::mat4 transMat = glm::mat4(e1, e2, e3, trans);
-	
-	modelMatrix = transMat * modelMatrix;
+	translateOffset = trans;
+	dirty = true;
 }
 
-void Node::rotate(int x, int y, int z, float angle)
+void Node::setRotate(glm::vec3 eular)
 {
-	float radian = glm::radians(angle);
-	
-	glm::vec4 col1 = glm::vec4(cos(radian) + (1 - cos(radian)) * x * x, 
-							(1 - cos(radian)) * y * x + sin(radian) * z, 
-							(1 - cos(radian)) * z * x - sin(radian) * y, 0);
+	if (eular == getRotateAngle())
+	{
+		return;
+	}
 
-	glm::vec4 col2 = glm::vec4((1 - cos(radian)) * y * x - sin(radian) * z,
-							cos(radian) + (1 - cos(radian)) * y * y,
-							(1 - cos(radian)) * z * y + sin(radian) * x, 0);
+	glm::vec3 eularAngle = glm::radians(eular);
+	rotateOffset = glm::quat(eularAngle);
 
-	glm::vec4 col3 = glm::vec4((1 - cos(radian)) * z * x + sin(radian) * y,
-							(1 - cos(radian)) * z * y - sin(radian) * x,
-							cos(radian) + (1 - cos(radian)) * z * z, 0);
-
-	glm::vec4 col4 = glm::vec4(0, 0, 0, 1);
-
-	glm::mat4 rotateMat = glm::mat4(col1, col2, col3, col4);
-	
-	glm::vec3 translateCache(modelMatrix[0][3], modelMatrix[1][3], modelMatrix[2][3]);
-	translate(-translateCache.x, -translateCache.y, -translateCache.z);
-	
+	rotateOffset = glm::normalize(rotateOffset); 
+	dirty = true;
 }

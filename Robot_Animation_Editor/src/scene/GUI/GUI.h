@@ -8,10 +8,15 @@ class GUI
 {
 private:
 	EditorScene* scene; // Point to the scene that GUI is currently binding with
+	Robot* robot;
+	Node* selectedNode;
+
+	bool seperateMode;
 
 	int partSelected;
 	void startFrame();
-	void defineInterface();
+	void mainPanel();
+	void transformPanel(Node* node);
 	void _render();
 
 public:

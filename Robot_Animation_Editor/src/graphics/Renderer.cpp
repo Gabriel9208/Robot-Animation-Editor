@@ -17,10 +17,11 @@ Renderer& Renderer::getInstance()
 	return instance;
 }
 
-void Renderer::drawElement(const ShaderProgram& program, const Object& obj, const Camara& camara) const
+void Renderer::drawElement(const ShaderProgram& program, Node& node, const Camara& camara) const
 {
 	program.use();
-	obj.bind();
+	Object* obj = &node.getObject();
+	obj->bind();
 
 	/*
 	X: from about -5.7 to 5.9
@@ -28,17 +29,23 @@ void Renderer::drawElement(const ShaderProgram& program, const Object& obj, cons
 	Z: from about -23.9 to -16.4
 	*/
 
-	glm::mat4 model = glm::mat4(1.0f);
+	if (node.isDirty())
+	{
+		node.updateModelMatrix();
+	}
+
+	glm::mat4 parent = node.getParentModelMatrix();
+	glm::mat4 model = node.getModelMatrix();
 	glm::mat4 view = camara.lookAt();
 	glm::mat4 orth = glm::ortho(-7.0f, 7.0f, -20.0f, 10.0f, -30.0f, 10.0f);
 
-	glm::mat4 MVP = orth * view * model;
+	glm::mat4 MVP = orth * view * parent * model;
 
 	GLCall(unsigned int programId = glGetUniformLocation(program.getId(), "u_MVP"));
 	GLCall(glUniformMatrix4fv(programId, 1, GL_FALSE, &MVP[0][0]));
 
-	std::vector<unsigned int> objFaces = obj.getFaces();
-	std::vector<std::string> objmtls =  obj.getMatUsed();
+	std::vector<unsigned int> objFaces = obj->getFaces();
+	std::vector<std::string> objmtls =  obj->getMatUsed();
 
 	MaterialManager& mm = MaterialManager::getInstance();
 	unsigned int accumIndices = 0;

@@ -1,5 +1,7 @@
 #include "GUI.h"
 
+#include "glm/glm.hpp"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -43,6 +45,8 @@ void GUI::init(GLFWwindow* window, EditorScene* _scene)
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     bindScene(_scene);
+    robot = &(scene->getRobot());
+    selectedNode = &(robot->getNode(HEAD));
 }
 
 void GUI::bindScene(EditorScene* _scene)
@@ -56,7 +60,7 @@ void GUI::bindScene(EditorScene* _scene)
 void GUI::render()
 {
     startFrame();
-    defineInterface();
+    mainPanel();
     _render();
 }
 
@@ -74,8 +78,10 @@ void GUI::startFrame()
     ImGui::NewFrame();
 }
 
-void GUI::defineInterface()
+void GUI::mainPanel()
 {
+    ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
     ImGui::Begin("Parts of the Robot");
     // Header section
     ImGui::SeparatorText("Usage");
@@ -101,31 +107,56 @@ void GUI::defineInterface()
         "Left Foot"
     };
 
-    // Option 1: Using ListBox with full-width items (requires padding hack)
+    
     ImGui::PushItemWidth(-1);  // Make ListBox fill available width
     if (ImGui::ListBox("##PartsList", &partSelected, partNames, IM_ARRAYSIZE(partNames), IM_ARRAYSIZE(partNames)))
     {
-        switch (partSelected) {
-        case HEAD:
-        case TOP_BODY:
-        case BOTTOM_BODY:
-        case RIGHT_UPPER_ARM:
-        case RIGHT_LOWER_ARM:
-        case RIGHT_HAND:
-        case LEFT_UPPER_ARM:
-        case LEFT_LOWER_ARM:
-        case LEFT_HAND:
-        case RIGHT_THIGH:
-        case RIGHT_CALF:
-        case RIGHT_FOOT:
-        case LEFT_THIGH:
-        case LEFT_CALF:
-        case LEFT_FOOT:
-            break;
-        }
+        Robot* robot = &scene->getRobot();
+        selectedNode = &robot->getNode(partSelected);
     }
     ImGui::PopItemWidth();
     ImGui::End();
+
+    ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Transformation of the Robot");
+    transformPanel(selectedNode);
+    ImGui::End();
+
+}
+
+void GUI::transformPanel(Node* node)
+{    
+    glm::vec3 trans = node->getTranslateOffset();
+    glm::vec3 angle = node->getRotateAngle();
+
+    ImGui::SeparatorText("Translation");
+    if (ImGui::DragFloat("x (Translate)", &trans[0], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+    {
+        node->setTranslate(trans);
+    }
+    if (ImGui::DragFloat("y (Translate)", &trans[1], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+    {
+        node->setTranslate(trans);
+    }
+    if (ImGui::DragFloat("z (Translate)", &trans[2], 0.05f, -FLT_MAX, FLT_MAX, "%.3f"))
+    {
+        node->setTranslate(trans);
+    }
+
+    ImGui::SeparatorText("Rotation");
+    if (ImGui::DragFloat("x (Rotate)", &angle[0], 0.05f, -360.0f, 360.0f, "%.3f"))
+    {
+        node->setRotate(angle);
+    }
+    if (ImGui::DragFloat("y (Rotate)", &angle[1], 0.05f, -360.0f, 360.0f, "%.3f"))
+    {
+        node->setRotate(angle);
+    }
+    if (ImGui::DragFloat("z (Rotate)", &angle[2], 0.05f, -360.0f, 360.0f, "%.3f"))
+    {
+        node->setRotate(angle);
+    }
 }
 
 void GUI::_render()

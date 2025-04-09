@@ -53,6 +53,6 @@ void Robot::render(Renderer& renderer, const Camara& camara, const ShaderProgram
 	renderer.clear();
 	for (int i = 0; i < parts.size(); i++)
 	{
-		renderer.drawElement(program, parts[i].getObject(), camara);
+		renderer.drawElement(program, parts[i], camara);
 	}
 }
