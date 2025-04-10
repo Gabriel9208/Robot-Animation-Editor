@@ -3,8 +3,17 @@
 
 #include "scene/GUI/GUI.h"
 
+#include "glm/gtc/quaternion.hpp"
+
 int App::windowWidth = 800;
 int App::windowHeight = 800;
+
+double lastCursorX;
+double lastCursorY;
+
+bool mouseMiddlePressed;
+bool mouseRightPressed;
+
 
 static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -12,81 +21,75 @@ static void keyPress(GLFWwindow* window, int key, int scancode, int action, int 
     Camara* camara = &(app->getCamara());
     glm::vec3 camaraPos = camara->getPos();
     glm::vec3 camaraTarget = camara->getTarget();
-    const float OFFSET = 0.3f;
+    const float ROTATE_SPEED = 2.0f;
+    const float TRANSLATE_SPEED = 0.5f;
 
     if (action == GLFW_REPEAT || action == GLFW_PRESS)
     {
         if (key == GLFW_KEY_W) // camara forward
         {
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-                camaraPos[2] -= OFFSET;
-                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1], camaraTarget[2] - OFFSET));
+                camaraPos[2] -= TRANSLATE_SPEED;
+                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1], camaraTarget[2] - TRANSLATE_SPEED));
+                camara->setPos(camaraPos);
             }
             else
             {
-                // TODO: still have gimbal lock issue -> maybe use quaternion
-                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -0.05f, glm::vec3(1.0f, 0.0f, 0.0f));
-                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
-                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+                camara->rotateAround(-ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
             }
-            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_S) // camara backward
         {
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-                camaraPos[2] += OFFSET;
-                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1], camaraTarget[2] + OFFSET));
+                camaraPos[2] += TRANSLATE_SPEED;
+                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1], camaraTarget[2] + TRANSLATE_SPEED));
+                camara->setPos(camaraPos);
             }
             else
             {
-                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), 0.05f, glm::vec3(1.0f, 0.0f, 0.0f));
-                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
-                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+                camara->rotateAround(ROTATE_SPEED, glm::vec3(1.0f, 0.0f, 0.0f));
             }
-            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_D) // camara go right
         {
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-                camaraPos[0] += OFFSET;
-                camara->setTarget(glm::vec3(camaraTarget[0] + OFFSET, camaraTarget[1], camaraTarget[2]));
+                camaraPos[0] += TRANSLATE_SPEED;
+                camara->setTarget(glm::vec3(camaraTarget[0] + TRANSLATE_SPEED, camaraTarget[1], camaraTarget[2]));
+                camara->setPos(camaraPos);
             }
             else
             {
-                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), 0.05f, glm::vec3(0.0f, 1.0f, 0.0f));
-                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
-                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+                camara->rotateAround(ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+
             }
-            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_A) // camara go left
         {
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-                camaraPos[0] -= OFFSET;
-                camara->setTarget(glm::vec3(camaraTarget[0] - OFFSET, camaraTarget[1], camaraTarget[2]));
+                camaraPos[0] -= TRANSLATE_SPEED;
+                camara->setTarget(glm::vec3(camaraTarget[0] - TRANSLATE_SPEED, camaraTarget[1], camaraTarget[2]));
+                camara->setPos(camaraPos);
             }
             else
             {
-                glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), -0.05f, glm::vec3(0.0f, 1.0f, 0.0f));
-                glm::vec4 direction = glm::vec4((camaraPos - camaraTarget), 0.0f);
-                camaraPos = glm::vec3(rotation * direction) + camaraTarget;
+                camara->rotateAround(-ROTATE_SPEED, glm::vec3(0.0f, 1.0f, 0.0f));
+
             }
-            camara->setPos(camaraPos);
         }
         if (key == GLFW_KEY_E) // camara go up
         {
-            camaraPos[1] += OFFSET;
+            camaraPos[1] += TRANSLATE_SPEED;
             camara->setPos(camaraPos);
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1] + OFFSET, camaraTarget[2]));
+                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1] + TRANSLATE_SPEED, camaraTarget[2]));
             }
         }
         if (key == GLFW_KEY_Q) // camara go down
         {
-            camaraPos[1] -= OFFSET;
+            camaraPos[1] -= TRANSLATE_SPEED;
             camara->setPos(camaraPos);
             if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) != GLFW_PRESS) {
-                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1] - OFFSET, camaraTarget[2]));
+                camara->setTarget(glm::vec3(camaraTarget[0], camaraTarget[1] - TRANSLATE_SPEED, camaraTarget[2]));
             }
         }
     }
@@ -96,6 +99,64 @@ static void windowResize(GLFWwindow* window, int width, int height)
 {
     App::setWindowHeight(height);
     App::setWindowWidth(width);
+}
+
+static void mouseEvent(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+    {
+        glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
+        mouseMiddlePressed = true;
+        
+    }
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
+    {
+        mouseMiddlePressed = false;
+
+    }
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    {
+        glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
+        mouseRightPressed = true;
+    }
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+    {
+        mouseRightPressed = false;
+    }
+}
+
+static void cursorEvent(GLFWwindow* window, double xpos, double ypos)
+{
+    if (mouseMiddlePressed || mouseRightPressed)
+    {
+        App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+        Camara* camara = &(app->getCamara());
+        glm::vec3 camaraPos = camara->getPos();
+        glm::vec3 camaraTarget = camara->getTarget();
+
+        double x = xpos - lastCursorX;
+        double y = ypos - lastCursorY;
+
+        float speedFactor = 0.125f;
+
+        if (mouseMiddlePressed)
+        {
+            camara->rotateAround(-y, glm::vec3(1.0f, 0.0f, 0.0f));
+            camara->rotateAround(-x, glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+
+        if (mouseRightPressed)
+        {
+            camaraPos[0] += -x * speedFactor;
+            camaraPos[1] += y * speedFactor;
+
+            camara->setTarget(glm::vec3(camaraTarget[0] - x * speedFactor, camaraTarget[1] + y * speedFactor, camaraTarget[2]));
+            camara->setPos(camaraPos);
+        }
+
+        lastCursorX = xpos;
+        lastCursorY = ypos;
+    }
 }
 
 void App::glInit()
@@ -145,10 +206,15 @@ void App::init()
 
     glInit();
 
+    mouseMiddlePressed = false;
+    mouseRightPressed = false;
+
     mainScene = new EditorScene();
     guiPanel = new GUI(window, mainScene);
     glfwSetKeyCallback(window, keyPress);
     glfwSetFramebufferSizeCallback(window, windowResize);
+    glfwSetMouseButtonCallback(window, mouseEvent);
+    glfwSetCursorPosCallback(window, cursorEvent);
 }
 
 void App::loop()
