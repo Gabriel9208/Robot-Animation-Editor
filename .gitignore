@@ -400,7 +400,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Gabriel Added
-Dependencies/
 Debug/
-Robot_Animation_Editor/src/lib/
-Robot_Animation_Editor/res/robot/
