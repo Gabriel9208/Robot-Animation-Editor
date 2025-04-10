@@ -4,6 +4,8 @@
 #include "scene/GUI/GUI.h"
 
 #include "glm/gtc/quaternion.hpp"
+#include "imgui/imgui.h"             
+#include "imgui/imgui_impl_glfw.h"
 
 int App::windowWidth = 800;
 int App::windowHeight = 800;
@@ -103,25 +105,31 @@ static void windowResize(GLFWwindow* window, int width, int height)
 
 static void mouseEvent(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
-    {
-        glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
-        mouseMiddlePressed = true;
-        
-    }
-    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
-    {
-        mouseMiddlePressed = false;
+    
+    ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+    
+    ImGuiIO& io = ImGui::GetIO();
+    if (!io.WantCaptureMouse) {
+        if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+        {
+            glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
+            mouseMiddlePressed = true;
 
-    }
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
-    {
-        glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
-        mouseRightPressed = true;
-    }
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
-    {
-        mouseRightPressed = false;
+        }
+        if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
+        {
+            mouseMiddlePressed = false;
+
+        }
+        if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+        {
+            glfwGetCursorPos(window, &lastCursorX, &lastCursorY);
+            mouseRightPressed = true;
+        }
+        if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+        {
+            mouseRightPressed = false;
+        }
     }
 }
 
@@ -133,27 +141,28 @@ static void cursorEvent(GLFWwindow* window, double xpos, double ypos)
         Camara* camara = &(app->getCamara());
         glm::vec3 camaraPos = camara->getPos();
         glm::vec3 camaraTarget = camara->getTarget();
-
+    
         double x = xpos - lastCursorX;
         double y = ypos - lastCursorY;
-
-        float speedFactor = 0.125f;
-
+    
+        float translationSpeedFactor = 0.125f;
+        float rotationSpeedFactor = 0.75f;
+    
         if (mouseMiddlePressed)
         {
-            camara->rotateAround(-y, glm::vec3(1.0f, 0.0f, 0.0f));
-            camara->rotateAround(-x, glm::vec3(0.0f, 1.0f, 0.0f));
+            camara->rotateAround(-y * rotationSpeedFactor, glm::vec3(1.0f, 0.0f, 0.0f));
+            camara->rotateAround(-x * rotationSpeedFactor, glm::vec3(0.0f, 1.0f, 0.0f));
         }
-
+    
         if (mouseRightPressed)
         {
-            camaraPos[0] += -x * speedFactor;
-            camaraPos[1] += y * speedFactor;
-
-            camara->setTarget(glm::vec3(camaraTarget[0] - x * speedFactor, camaraTarget[1] + y * speedFactor, camaraTarget[2]));
+            camaraPos[0] += -x * translationSpeedFactor;
+            camaraPos[1] += y * translationSpeedFactor;
+    
+            camara->setTarget(glm::vec3(camaraTarget[0] - x * translationSpeedFactor, camaraTarget[1] + y * translationSpeedFactor, camaraTarget[2]));
             camara->setPos(camaraPos);
         }
-
+    
         lastCursorX = xpos;
         lastCursorY = ypos;
     }

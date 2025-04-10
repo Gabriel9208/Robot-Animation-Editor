@@ -50,8 +50,7 @@ void GUI::init(GLFWwindow* window, EditorScene* _scene)
 
     ImGui::StyleColorsDark();
 
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window, false); // Disable this because we have manually handle the glfwSetMouseButtonCallback
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     bindScene(_scene);

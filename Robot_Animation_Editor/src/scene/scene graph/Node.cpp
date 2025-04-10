@@ -39,7 +39,12 @@ Node& Node::operator=(Node&& other) noexcept
 void Node::updateModelMatrix()
 {
 	modelMatrix = glm::translate(glm::mat4(1.0f), translateOffset) * glm::mat4_cast(rotateOffset);
-	updateChildMatrix();
+
+	for (int i = 0; i < children.size(); i++)
+	{
+		children[i]->updateParentMatrix(parentModelMatrix * modelMatrix);
+	}
+
 	dirty = false;
 }
 
@@ -48,11 +53,12 @@ void Node::addChildren(const std::vector<Node*>& _childern)
 	children.insert(children.end(), _childern.begin(), _childern.end());
 }
 
-void Node::updateChildMatrix()
+void Node::updateParentMatrix(const glm::mat4 parent)
 {
+	parentModelMatrix = parent;
 	for (int i = 0; i < children.size(); i++)
 	{
-		children[i]->parentModelMatrix = modelMatrix;
+		children[i]->updateParentMatrix(parent * modelMatrix);
 	}
 }
 
@@ -60,6 +66,7 @@ void Node::setTranslate(glm::vec3 trans)
 {
 	translateOffset = trans;
 	dirty = true;
+	updateModelMatrix();
 }
 
 void Node::setRotate(glm::vec3 eular)
@@ -74,4 +81,5 @@ void Node::setRotate(glm::vec3 eular)
 
 	rotateOffset = glm::normalize(rotateOffset); 
 	dirty = true;
+	updateModelMatrix();
 }

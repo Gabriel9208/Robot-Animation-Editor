@@ -66,14 +66,14 @@ void Robot::standMotion()
 	parts[2].setTranslate(glm::vec3(0.000000, -3.550000, 0.000000));
 	parts[3].setTranslate(glm::vec3(-7.650000, 0.050000, 0.000000));
 	parts[4].setTranslate(glm::vec3(-2.950000, -6.400000, 0.000000));
-	parts[5].setTranslate(glm::vec3(-11.250000, -8.500000, 3.900000));
+	parts[5].setTranslate(glm::vec3(-3.650000, -8.500000, 3.900000));
 	parts[6].setTranslate(glm::vec3(7.650000, 0.000000, 0.000000));
 	parts[7].setTranslate(glm::vec3(2.900000, -6.400000, 0.000000));
-	parts[8].setTranslate(glm::vec3(11.200000, -8.500000, 3.900000));
+	parts[8].setTranslate(glm::vec3(3.650000, -8.500000, 3.900000));
 	parts[9].setTranslate(glm::vec3(-3.250000, -6.650000, 2.200000));
 	parts[10].setTranslate(glm::vec3(-3.350000, -13.100000, 1.150000));
-	parts[11].setTranslate(glm::vec3(-4.700000, -23.150000, 1.100000));
+	parts[11].setTranslate(glm::vec3(-1.350000, -16.799999, -1.150000));
 	parts[12].setTranslate(glm::vec3(3.250000, -6.650000, 2.200000));
 	parts[13].setTranslate(glm::vec3(3.200000, -13.100000, 1.150000));
-	parts[14].setTranslate(glm::vec3(4.550000, -23.150000, 1.100000));
+	parts[14].setTranslate(glm::vec3(1.350000, -16.799999, -1.150000));
 }

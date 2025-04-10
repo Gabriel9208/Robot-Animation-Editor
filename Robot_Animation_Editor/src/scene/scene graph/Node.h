@@ -39,7 +39,7 @@ public:
 
 
 	void addChildren(const std::vector<Node*>& _childern);
-	void updateChildMatrix();
+	void updateParentMatrix(const glm::mat4 parent);
 
 	void setTranslate(glm::vec3 trans);
 	void setRotate(glm::vec3 eular);
